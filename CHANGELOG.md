@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/YieldRay/nrm-lite/compare/v0.1.1...v0.1.2) (2024-03-11)
+
+
+### Features
+
+* support timeout for test command ([d14c87d](https://github.com/YieldRay/nrm-lite/commit/d14c87d70a5990dc60c855f5c42883d1d9e8da3e))
+
 ## 0.1.1 (2024-03-11)
 
 
