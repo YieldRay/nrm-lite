@@ -1,4 +1,4 @@
-import { REGISTRIES } from './registry.mjs'
+import { REGISTRIES, speedTest } from './registry.mjs'
 
 /**
  * @param {string} str
@@ -32,18 +32,51 @@ const c = {
 export default c
 
 /**
- * @param {string} registryUrl
+ * @param {string} currentRegistryUrl
+ * @param {Array<{name:string,url:string,timeSpent?:number|null}>} registriesInfo
+ * @param {number=} timeoutLimit - milliseconds
  */
-export function printRegistries(registryUrl) {
-    let maxNameLength = 0
+export function printRegistries(
+    currentRegistryUrl,
+    registriesInfo = Object.entries(REGISTRIES).map(([name, url]) => ({
+        name,
+        url,
+    })),
+    timeoutLimit
+) {
+    const maxNameLength = Math.max(
+        ...registriesInfo.map(({ name }) => name.length)
+    )
+    /**
+     * @type {number=}
+     */
+    let maxUrlLength = undefined
 
-    const registries = Object.entries(REGISTRIES).map(([name, url]) => {
-        maxNameLength = Math.max(maxNameLength, name.length)
-        return { name, url, highlight: url === registryUrl }
-    })
+    for (let { name, url, timeSpent } of registriesInfo) {
+        if (timeoutLimit) {
+            // lazy compute
+            if (!maxUrlLength)
+                maxUrlLength = Math.max(
+                    ...registriesInfo.map(({ url }) => url.length)
+                )
+        }
 
-    for (const { name, url, highlight } of registries) {
-        const row = `${name.padEnd(maxNameLength)} → ${url}`
-        console.log(highlight ? c.blue(row) : row)
+        let row = `${name.padEnd(maxNameLength)} → ${
+            maxUrlLength ? url.padEnd(maxUrlLength) : url
+        }`
+        if (url === currentRegistryUrl) row = c.blue(row)
+
+        if (timeoutLimit) {
+            timeSpent ??= Infinity
+
+            if (timeSpent >= timeoutLimit) {
+                row += c.red(` (>${(timeoutLimit / 1000).toFixed(1)}s)`)
+            } else if (timeSpent >= timeoutLimit / 2) {
+                row += c.yellow(` (${(timeSpent / 1000).toFixed(2)}s)`)
+            } else {
+                row += c.green(` (${(timeSpent / 1000).toFixed(2)}s)`)
+            }
+        }
+        console.log(row)
     }
 }

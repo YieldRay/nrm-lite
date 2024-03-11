@@ -23,11 +23,12 @@ nrml --help
 ## Usage
 
 ```sh
-nrm-lite v0.1.0
+nrm-lite
 
 Usage:
     nrml ls            List registry
     nrml use [name]    Use registry
+    nrml test          Test registry speed
     nrml rc            Open .npmrc file
     nrml help          Show this help
 Global Options:

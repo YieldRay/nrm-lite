@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname } from 'node:path'
 import { getRegistry, setRegistry, getConfigPath } from './config.mjs'
-import { REGISTRIES } from './registry.mjs'
+import { REGISTRIES, speedTest } from './registry.mjs'
 import c, { printRegistries } from './tty.mjs'
 
 // https://nodejs.org/api/util.html#utilparseargsconfig
@@ -39,6 +39,10 @@ if (values.help) {
 
 const command = positionals[0] || 'ls'
 const { local } = values
+/**
+ * @type {string}
+ */
+let name
 
 switch (command) {
     case 'h':
@@ -48,15 +52,19 @@ switch (command) {
     case 'ls':
         ls()
         break
+    case 'test':
+        name = positionals[1]
+        test(name)
+        break
     case 'rc':
         rc()
         break
     case 'use':
-        const name = positionals[1]
+        name = positionals[1]
         use(name)
         break
     default:
-        console.error(`Unknown command ${command}\n`)
+        console.error(`Unknown command '${command}'\n`)
         process.exit(1)
 }
 
@@ -71,6 +79,7 @@ function help() {
 ${c.bold('Usage:')}
     nrml ls            List registry
     nrml use ${c.gray('[name]')}    Use registry
+    nrml test          Test registry speed
     nrml rc            Open .npmrc file
     nrml help          Show this help
 ${c.bold('Global Options:')}
@@ -101,6 +110,22 @@ async function use(name) {
     const registryUrl = REGISTRIES[name]
     await setRegistry(local, registryUrl)
     printRegistries(registryUrl)
+}
+
+/**
+ * @param {string} name
+ */
+async function test(name) {
+    const info = await Promise.all(
+        Object.entries(REGISTRIES).map(async ([name, url]) => ({
+            name,
+            url,
+            timeSpent: await speedTest(url),
+        }))
+    )
+
+    const currentRegistry = await getRegistry(local)
+    printRegistries(currentRegistry, info, 2000)
 }
 
 async function rc() {

@@ -47,3 +47,20 @@ export async function findRegistryFromStream(stream) {
     }
     return { registry: null, registryLineNumber: null, lines }
 }
+
+/**
+ * @param {string} url
+ */
+export async function speedTest(url, milliseconds = 2000) {
+    try {
+        const beginTime = Date.now()
+        await fetch(url, {
+            method: 'HEAD',
+            signal: AbortSignal.timeout(milliseconds),
+        })
+        const timeSpent = Date.now() - beginTime
+        return timeSpent
+    } catch {
+        return null
+    }
+}

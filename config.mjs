@@ -31,7 +31,7 @@ export async function setRegistry(local, registryUrl) {
 }
 
 /**
- * @param {boolean|undefined} local
+ * @param {boolean=} local
  */
 export async function getRegistry(local) {
     const filePath = await getConfigPath(local)
@@ -42,7 +42,7 @@ export async function getRegistry(local) {
 
 /**
  * If `local` is not provided, check if local npmrc file exists
- * @param {boolean|undefined} local
+ * @param {boolean=} local
  * @noexcept
  */
 export async function getConfigPath(local) {
