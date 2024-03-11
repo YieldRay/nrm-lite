@@ -17,7 +17,7 @@
         "checkJs": true,
 
         // Type Checking
-        "strict": false, // (without TS it's hard to express some type)
+        "strict": true,
         "noFallthroughCasesInSwitch": true,
         "noPropertyAccessFromIndexSignature": true
     }

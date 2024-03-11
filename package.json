@@ -1,25 +1,44 @@
 {
-    "name": "nodejs-purejs-template",
-    "private": true,
+    "name": "nrm-lite",
     "version": "0.1.0",
     "type": "module",
-    "description": "",
+    "description": "simple and lightweight replacement for nrm",
     "main": "index.mjs",
     "scripts": {
         "test": "node --test",
-        "watch": "tsc --watch"
+        "watch": "tsc --watch",
+        "format": "prettier --write ."
     },
-    "keywords": [],
-    "author": "",
-    "license": "",
     "engines": {
         "node": ">16"
     },
+    "files": [
+        "*.js",
+        "*.mjs",
+        "!*.test.*"
+    ],
     "bin": {
-        "cli-name": "./cli.mjs"
+        "nrml": "cli.mjs"
     },
     "devDependencies": {
-        "@types/node": "^20.10.6",
-        "typescript": "^5.3.3"
-    }
+        "@types/node": "^20.11.25",
+        "typescript": "^5.4.2"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org"
+    },
+    "keywords": [
+        "nrm",
+        "registry"
+    ],
+    "author": "YieldRay",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/YieldRay/nrm-lite.git"
+    },
+    "bugs": {
+        "url": "https://github.com/YieldRay/nrm-lite/issues"
+    },
+    "homepage": "https://github.com/YieldRay/nrm-lite#readme"
 }

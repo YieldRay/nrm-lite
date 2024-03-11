@@ -1,4 +1,33 @@
-# nodejs-purejs-template
+# nrm-lite
 
-Build a nodejs package in pure javascript,  
-but use [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html) to enable typescript check!
+Simple and lightweight replacement for nrm.  
+Like [dnrm](https://github.com/markthree/dnrm), but in pure Node.js
+
+## Features
+
+-   Super lightweight, pure Node.js with NO dependency
+-   Fast, DO NOT parse the `.npmrc` file (slightly slower that `dnrm`, due to the runtime)
+-   Correct, follow the rules of the `.npmrc` file
+
+## Install
+
+```sh
+# install `nrml` command globally
+npm install -g nrm-lite
+
+nrml --help
+```
+
+## Usage
+
+```sh
+nrm-lite v0.1.0
+
+Usage:
+    nrml ls            List registry
+    nrml use [name]    Use registry
+    nrml rc            Open .npmrc file
+    nrml help          Show this help
+Global Options:
+    --local            Use local .npmrc file, rather than the global one (default: false)
+```
