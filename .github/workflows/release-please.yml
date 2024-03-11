@@ -9,6 +9,7 @@ jobs:
         permissions:
             contents: write # to create release commit (google-github-actions/release-please-action)
             pull-requests: write # to create release PR (google-github-actions/release-please-action)
+            id-token: write # (JS-DevTools/npm-publish)
 
         runs-on: ubuntu-latest
         steps:
