@@ -1,5 +1,7 @@
 # nrm-lite
 
+[![npm](https://img.shields.io/npm/v/nrm-lite)](https://www.npmjs.com/package/nrm-lite)  [![install size](https://packagephobia.com/badge?p=nrm-lite)](https://packagephobia.com/result?p=nrm-lite)
+
 Simple and lightweight replacement for nrm.  
 Like [dnrm](https://github.com/markthree/dnrm), but in pure Node.js
 
@@ -12,7 +14,7 @@ Like [dnrm](https://github.com/markthree/dnrm), but in pure Node.js
 ## Install
 
 ```sh
-# install `nrml` command globally
+# install the `nrml` command globally
 npm install -g nrm-lite
 
 nrml --help
