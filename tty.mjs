@@ -67,9 +67,9 @@ export function printRegistries(
         if (url === currentRegistryUrl) row = c.blue(row)
 
         if (timeoutLimit) {
-            timeSpent ??= Infinity
-
-            if (timeSpent >= timeoutLimit) {
+            if (!timeSpent) {
+                row += c.red(` (Error)`)
+            } else if (timeSpent >= timeoutLimit) {
                 row += c.red(` (>${(timeoutLimit / 1000).toFixed(1)}s)`)
             } else if (timeSpent >= timeoutLimit / 2) {
                 row += c.yellow(` (${(timeSpent / 1000).toFixed(2)}s)`)

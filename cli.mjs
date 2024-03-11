@@ -43,6 +43,10 @@ const { local } = values
  * @type {string}
  */
 let name
+/**
+ * @type {any}
+ */
+let timeout
 
 switch (command) {
     case 'h':
@@ -53,8 +57,8 @@ switch (command) {
         ls()
         break
     case 'test':
-        name = positionals[1]
-        test(name)
+        timeout = positionals[1] || '2'
+        test(Number.parseFloat(timeout) * 1000)
         break
     case 'rc':
         rc()
@@ -77,11 +81,13 @@ function help() {
     console.error(`${c.green(pkg.name)} v${pkg.version}
 
 ${c.bold('Usage:')}
-    nrml ls            List registry
-    nrml use ${c.gray('[name]')}    Use registry
-    nrml test          Test registry speed
-    nrml rc            Open .npmrc file
-    nrml help          Show this help
+    nrml ls                List registry
+    nrml use  ${c.gray('<name>')}       Use registry
+    nrml test ${c.gray(
+        '[<timeout>]'
+    )}  Test registry speed, optional timeout in second (default: 2)
+    nrml rc                Open .npmrc file
+    nrml help              Show this help
 ${c.bold('Global Options:')}
     --local            Use local .npmrc file, rather than the global one (default: false)`)
     process.exit(1)
@@ -113,19 +119,20 @@ async function use(name) {
 }
 
 /**
- * @param {string} name
+ * @param {number} timeoutLimit
  */
-async function test(name) {
+async function test(timeoutLimit) {
     const info = await Promise.all(
         Object.entries(REGISTRIES).map(async ([name, url]) => ({
             name,
             url,
-            timeSpent: await speedTest(url),
+            timeSpent: await speedTest(url, timeoutLimit),
         }))
     )
 
     const currentRegistry = await getRegistry(local)
-    printRegistries(currentRegistry, info, 2000)
+    printRegistries(currentRegistry, info, timeoutLimit)
+    process.exit(0)
 }
 
 async function rc() {

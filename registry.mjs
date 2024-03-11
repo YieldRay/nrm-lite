@@ -50,17 +50,21 @@ export async function findRegistryFromStream(stream) {
 
 /**
  * @param {string} url
+ * @param {number} timeoutLimit - in milliseconds
  */
-export async function speedTest(url, milliseconds = 2000) {
+export async function speedTest(url, timeoutLimit) {
     try {
         const beginTime = Date.now()
         await fetch(url, {
             method: 'HEAD',
-            signal: AbortSignal.timeout(milliseconds),
+            signal: AbortSignal.timeout(timeoutLimit),
         })
         const timeSpent = Date.now() - beginTime
         return timeSpent
-    } catch {
-        return null
+    } catch (e) {
+        if (e instanceof DOMException) {
+            return Infinity
+        }
+        return null // Network Error
     }
 }

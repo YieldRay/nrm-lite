@@ -17,7 +17,13 @@ Like [dnrm](https://github.com/markthree/dnrm), but in pure Node.js
 # install the `nrml` command globally
 npm install -g nrm-lite
 
+# test if it's installed
 nrml --help
+
+# examples
+nrml ls
+nrml use taobao
+nrml test
 ```
 
 ## Usage
@@ -26,11 +32,11 @@ nrml --help
 nrm-lite
 
 Usage:
-    nrml ls            List registry
-    nrml use [name]    Use registry
-    nrml test          Test registry speed
-    nrml rc            Open .npmrc file
-    nrml help          Show this help
+    nrml ls                List registry
+    nrml use  <name>       Use registry
+    nrml test [<timeout>]  Test registry speed, optional timeout in second (default: 2)
+    nrml rc                Open .npmrc file
+    nrml help              Show this help
 Global Options:
     --local            Use local .npmrc file, rather than the global one (default: false)
 ```
