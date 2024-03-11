@@ -1,0 +1,24 @@
+{
+    // https://www.typescriptlang.org/tsconfig#compilerOptions
+    "compilerOptions": {
+        // Modules
+        "rootDir": "./",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "resolveJsonModule": true,
+
+        // Others
+        "target": "ESNext",
+        "noEmit": true,
+        "skipLibCheck": true,
+
+        // JavaScript Support
+        "allowJs": true,
+        "checkJs": true,
+
+        // Type Checking
+        "strict": false, // (without TS it's hard to express some type)
+        "noFallthroughCasesInSwitch": true,
+        "noPropertyAccessFromIndexSignature": true
+    }
+}

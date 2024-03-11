@@ -1,0 +1,25 @@
+{
+    "name": "nodejs-purejs-template",
+    "private": true,
+    "version": "0.1.0",
+    "type": "module",
+    "description": "",
+    "main": "index.mjs",
+    "scripts": {
+        "test": "node --test",
+        "watch": "tsc --watch"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "",
+    "engines": {
+        "node": ">16"
+    },
+    "bin": {
+        "cli-name": "./cli.mjs"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.6",
+        "typescript": "^5.3.3"
+    }
+}
