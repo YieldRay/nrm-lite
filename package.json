@@ -1,6 +1,6 @@
 {
     "name": "nrm-lite",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "type": "module",
     "description": "simple and lightweight replacement for nrm",
     "main": "index.mjs",
