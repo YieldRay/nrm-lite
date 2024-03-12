@@ -7,6 +7,8 @@
 Fast and lightweight NpmRegistryManager, for the minimalists.  
 Like [dnrm](https://github.com/markthree/dnrm), but in pure Node.js.
 
+[![asciicast](https://asciinema.org/a/646571.svg)](https://asciinema.org/a/646571)
+
 ## Features
 
 -   Super lightweight, pure Node.js with NO dependency
