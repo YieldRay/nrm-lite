@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/YieldRay/nrm-lite/compare/v0.1.2...v0.1.3) (2024-03-12)
+
+
+### Bug Fixes
+
+* fix the --version flag ([9e059ef](https://github.com/YieldRay/nrm-lite/commit/9e059efaf24198123e01307a71e59dfdad09bba2))
+
 ## [0.1.2](https://github.com/YieldRay/nrm-lite/compare/v0.1.1...v0.1.2) (2024-03-11)
 
 
