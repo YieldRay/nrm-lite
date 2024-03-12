@@ -1,7 +1,7 @@
 import * as readline from 'node:readline'
 
 /**
- * @type { Record<string,string>}
+ * @type {Record<string,string>}
  */
 export const REGISTRIES = {
     npm: 'https://registry.npmjs.org/',
@@ -17,8 +17,8 @@ export const REGISTRIES = {
  * Note that `registryLineNumber` is index + 1
  *
  * @param {NodeJS.ReadableStream} stream
- * @returns {Promise<{registry:string,lines:string[],registryLineNumber:number}|
- *                   {registry:null,lines:string[],registryLineNumber:null}>}
+ * @returns {Promise<{registry:string,lines:string[],registryLineNumber:number}
+ *                  |{registry:null,lines:string[],registryLineNumber:null}>}
  * @see https://docs.npmjs.com/cli/configuring-npm/npmrc
  *
  * @example
@@ -49,6 +49,7 @@ export async function findRegistryFromStream(stream) {
 }
 
 /**
+ * Returns `Infinity` when execeed timeout, and `null` when network error
  * @param {string} url
  * @param {number} timeoutLimit - in milliseconds
  */
@@ -60,7 +61,7 @@ export async function speedTest(url, timeoutLimit) {
             signal: AbortSignal.timeout(timeoutLimit),
         })
         const timeSpent = Date.now() - beginTime
-        return timeSpent
+        return timeSpent > timeoutLimit ? Infinity : timeSpent
     } catch (e) {
         if (e instanceof DOMException) {
             return Infinity

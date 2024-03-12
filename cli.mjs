@@ -37,7 +37,7 @@ if (values.help) {
     help()
 }
 
-const command = positionals[0] || 'ls'
+const command = positionals[0] || ''
 const { local } = values
 /**
  * @type {string}
@@ -53,6 +53,9 @@ switch (command) {
     case 'help':
         help()
         break
+    // @ts-ignore intentional fallthrough here
+    case '':
+        if (values.version) help(true)
     case 'ls':
         ls()
         break
@@ -72,16 +75,23 @@ switch (command) {
         process.exit(1)
 }
 
-function help() {
+/**
+ * @param {boolean=} v - only print version number
+ */
+function help(v) {
     // assert json will cause ExperimentalWarning. so we use this instead
     // import pkg from './package.json' assert { type: 'json' }
     const __filename = fileURLToPath(import.meta.url)
     const __dirname = dirname(__filename)
     const pkg = JSON.parse(readFileSync(`${__dirname}/package.json`, 'utf-8'))
+    if (v) {
+        console.error('v' + pkg.version)
+        process.exit(1)
+    }
     console.error(`${c.green(pkg.name)} v${pkg.version}
 
 ${c.bold('Usage:')}
-    nrml ls                List registry
+    nrml ls                List registries
     nrml use  ${c.gray('<name>')}       Use registry
     nrml test ${c.gray(
         '[<timeout>]'
@@ -89,7 +99,7 @@ ${c.bold('Usage:')}
     nrml rc                Open .npmrc file
     nrml help              Show this help
 ${c.bold('Global Options:')}
-    --local            Use local .npmrc file, rather than the global one (default: false)`)
+    --local                Use local .npmrc file, rather than the global one (default: false)`)
     process.exit(1)
 }
 

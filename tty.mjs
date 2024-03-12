@@ -1,4 +1,4 @@
-import { REGISTRIES, speedTest } from './registry.mjs'
+import { REGISTRIES } from './registry.mjs'
 
 /**
  * @param {string} str
