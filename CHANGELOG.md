@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/YieldRay/nrm-lite/compare/v0.1.3...v0.2.0) (2024-06-11)
+
+
+### Bug Fixes
+
+* fallback when rc file not exists ([7335b03](https://github.com/YieldRay/nrm-lite/commit/7335b03e0b841cdeb8023e57b29577bc1b785d36))
+
 ## [0.1.3](https://github.com/YieldRay/nrm-lite/compare/v0.1.2...v0.1.3) (2024-03-12)
 
 ### Bug Fixes
