@@ -1,7 +1,11 @@
 import * as fs from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
-import { REGISTRIES, findRegistryFromStream } from './registry.mjs'
+import {
+    REGISTRIES,
+    getRegistryFromStream,
+    setRegistryFromStream,
+} from './registry.mjs'
 import { isFile } from './utils.mjs'
 
 /**
@@ -10,24 +14,13 @@ import { isFile } from './utils.mjs'
  */
 export async function setRegistry(local, registryUrl) {
     const filePath = await getConfigPath(local)
-
-    const fileStream = fs.createReadStream(filePath)
-    const { registry, lines, registryLineNumber } =
-        await findRegistryFromStream(fileStream)
-    const newRegistryLine = `registry=${registryUrl}`
-
-    if (!registry) {
-        lines.push(newRegistryLine)
-    } else if (registry === registryUrl) {
-        // same, do nothing
-        return
-    } else {
-        // number-1 is index
-        lines[registryLineNumber - 1] = newRegistryLine
+    try {
+        const fileStream = fs.createReadStream(filePath)
+        const result = await setRegistryFromStream(fileStream, registryUrl)
+        return writeFile(filePath, result)
+    } catch {
+        return writeFile(filePath, `registry=${registryUrl}`)
     }
-
-    const result = lines.join('\n')
-    return writeFile(filePath, result)
 }
 
 /**
@@ -35,9 +28,13 @@ export async function setRegistry(local, registryUrl) {
  */
 export async function getRegistry(local) {
     const filePath = await getConfigPath(local)
-    const fileStream = fs.createReadStream(filePath)
-    const { registry } = await findRegistryFromStream(fileStream)
-    return registry || REGISTRIES['npm']
+    try {
+        const fileStream = fs.createReadStream(filePath) // the file may not exists
+        return (await getRegistryFromStream(fileStream)) || REGISTRIES['npm']
+    } catch {
+        // when rc file not found, fallback registry to default
+        return REGISTRIES['npm']
+    }
 }
 
 /**

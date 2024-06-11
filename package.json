@@ -1,6 +1,6 @@
 {
     "name": "nrm-lite",
-    "version": "0.1.3",
+    "version": "0.2.0",
     "type": "module",
     "description": "Fast and lightweight NpmRegistryManager, for the minimalists.",
     "main": "index.mjs",
@@ -22,8 +22,8 @@
         "nrml": "cli.mjs"
     },
     "devDependencies": {
-        "@types/node": "^20.11.26",
-        "typescript": "^5.4.2"
+        "@types/node": "^20.14.2",
+        "typescript": "^5.4.5"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org"

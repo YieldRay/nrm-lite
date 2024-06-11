@@ -1,2 +1,2 @@
-export * from './config.mjs'
-export * from './registry.mjs'
+export { getRegistry, setRegistry, getConfigPath } from './config.mjs'
+export { speedTest } from './registry.mjs'

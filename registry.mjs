@@ -13,39 +13,49 @@ export const REGISTRIES = {
 }
 
 /**
- *
- * Note that `registryLineNumber` is index + 1
- *
- * @param {NodeJS.ReadableStream} stream
- * @returns {Promise<{registry:string,lines:string[],registryLineNumber:number}
- *                  |{registry:null,lines:string[],registryLineNumber:null}>}
- * @see https://docs.npmjs.com/cli/configuring-npm/npmrc
- *
- * @example
- * const fileStream = fs.createReadStream(path)
- * findRegistryFromStream(fileStream)
+ * Returns undefined when line does not contain registry, or registry as string
+ * @param {string} line
  */
-export async function findRegistryFromStream(stream) {
+function checkLine(line) {
+    let currLine = line.trim()
+    const keyName = 'registry'
+    if (!currLine.startsWith(keyName)) return
+    currLine = currLine.slice(keyName.length).trimStart()
+    if (!currLine.startsWith('=')) return
+    return currLine.slice(1).trimStart()
+}
+
+/**
+ * @param {NodeJS.ReadableStream} stream
+ * @returns {Promise<string|undefined>}
+ * @see https://docs.npmjs.com/cli/configuring-npm/npmrc
+ */
+export async function getRegistryFromStream(stream) {
     const rl = readline.createInterface(stream)
-    /**
-     * @type {string[]}
-     */
-    const lines = []
-
-    for await (const entireLine of rl) {
-        lines.push(entireLine)
-
-        let currLine = entireLine.trim()
-        const keyName = 'registry'
-        if (!currLine.startsWith(keyName)) continue
-        currLine = currLine.slice(keyName.length).trimStart()
-        if (!currLine.startsWith('=')) continue
-        currLine = currLine.slice(1).trimStart()
-
-        // now that current line is the registry url
-        return { registry: currLine, lines, registryLineNumber: lines.length }
+    for await (const line of rl) {
+        const r = checkLine(line)
+        if (r) return r
     }
-    return { registry: null, registryLineNumber: null, lines }
+}
+
+/**
+ * Returns the proceed rc content
+ * @param {NodeJS.ReadableStream} stream
+ * @param {string} registryUrl
+ * @returns {Promise<string>}
+ */
+export async function setRegistryFromStream(stream, registryUrl) {
+    const rl = readline.createInterface(stream)
+    const lines = []
+    for await (const line of rl) {
+        const r = checkLine(line)
+        if (r) {
+            lines.push(`registry=${registryUrl}`)
+        } else {
+            lines.push(line)
+        }
+    }
+    return lines.join('\n')
 }
 
 /**

@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname } from 'node:path'
 import { getRegistry, setRegistry, getConfigPath } from './config.mjs'
 import { REGISTRIES, speedTest } from './registry.mjs'
-import c, { printRegistries } from './tty.mjs'
+import c, { printRegistries } from './utils.mjs'
 
 // https://nodejs.org/api/util.html#utilparseargsconfig
 const { values, positionals } = parseArgs({

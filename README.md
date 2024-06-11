@@ -4,7 +4,7 @@
 [![node-current](https://img.shields.io/node/v/nrm-lite)](https://nodejs.dev/)
 [![install size](https://packagephobia.com/badge?p=nrm-lite)](https://packagephobia.com/result?p=nrm-lite)
 
-Fast and lightweight NpmRegistryManager, for the minimalists.  
+Fast and lightweight Npm [Registry](https://docs.npmjs.com/cli/using-npm/registry) Manager, for the minimalists.  
 Like [dnrm](https://github.com/markthree/dnrm), but in pure Node.js.
 
 [![asciicast](https://asciinema.org/a/646571.svg)](https://asciinema.org/a/646571)
