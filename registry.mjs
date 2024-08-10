@@ -59,7 +59,7 @@ export async function setRegistryFromStream(stream, registryUrl) {
 }
 
 /**
- * Returns `Infinity` when execeed timeout, and `null` when network error
+ * Returns `Infinity` when exceed timeout, and `null` when network error
  * @param {string} url
  * @param {number} timeoutLimit - in milliseconds
  */

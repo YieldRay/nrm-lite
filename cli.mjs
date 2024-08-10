@@ -5,6 +5,7 @@ import { execSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname } from 'node:path'
+import { platform } from 'node:os'
 import { getRegistry, setRegistry, getConfigPath } from './config.mjs'
 import { REGISTRIES, speedTest } from './registry.mjs'
 import c, { printRegistries } from './utils.mjs'
@@ -148,13 +149,28 @@ async function test(timeoutLimit) {
 async function rc() {
     const filePath = await getConfigPath(local)
     try {
+        // try vscode first
         execSync(`code ${filePath}`)
     } catch {
-        console.error(
-            `You do not have vscode installed!\nPlease open ${c.gray(
-                filePath
-            )} manually.`
-        )
-        process.exit(-1)
+        /** @type {Record<string, string>} */
+        const map = { win32: 'start', darwin: 'open', linux: 'xdg-open' }
+        const cmd = map[platform()]
+
+        let shouldRunEditor = false
+        try {
+            if (cmd) execSync(`${cmd} "${filePath}"`)
+            else shouldRunEditor = true
+        } catch {
+            shouldRunEditor = true
+        }
+
+        try {
+            if (shouldRunEditor) execSync(`editor "${filePath}"`)
+        } catch {
+            console.error(
+                `Failed to open file, please open ${c.gray(filePath)} manually.`
+            )
+            process.exit(-1)
+        }
     }
 }
