@@ -1,5 +1,5 @@
 import { stat } from 'node:fs/promises'
-import { REGISTRIES } from './registry.mjs'
+import { getAllRegistries } from './config.mjs'
 
 /**
  * @param {string} filePath
@@ -46,17 +46,20 @@ export default c
 
 /**
  * @param {string} currentRegistryUrl
- * @param {Array<{name:string,url:string,timeSpent?:number|null}>} registriesInfo
+ * @param {Array<{name:string,url:string,timeSpent?:number|null}>=} registriesInfo
  * @param {number=} timeoutLimit - milliseconds
  */
-export function printRegistries(
+export async function printRegistries(
     currentRegistryUrl,
-    registriesInfo = Object.entries(REGISTRIES).map(([name, url]) => ({
-        name,
-        url,
-    })),
+    registriesInfo,
     timeoutLimit
 ) {
+    const registries = await getAllRegistries()
+    registriesInfo ||= Array.from(registries.entries()).map(([name, url]) => ({
+        name,
+        url,
+    }))
+
     const maxNameLength = Math.max(
         ...registriesInfo.map(({ name }) => name.length)
     )

@@ -6,9 +6,15 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname } from 'node:path'
 import { platform } from 'node:os'
-import { getRegistry, setRegistry, getConfigPath } from './config.mjs'
-import { REGISTRIES, speedTest } from './registry.mjs'
+import {
+    getRegistry,
+    setRegistry,
+    getConfigPath,
+    getAllRegistries,
+} from './config.mjs'
+import { speedTest } from './registry.mjs'
 import c, { printRegistries } from './utils.mjs'
+import { appendNrmrc, readNrmrc, writeNrmrc } from './nrmrc.mjs'
 
 // https://nodejs.org/api/util.html#utilparseargsconfig
 const { values, positionals } = parseArgs({
@@ -40,14 +46,6 @@ if (values.help) {
 
 const command = positionals[0] || ''
 const { local } = values
-/**
- * @type {string}
- */
-let name
-/**
- * @type {any}
- */
-let timeout
 
 switch (command) {
     case 'h':
@@ -60,19 +58,32 @@ switch (command) {
     case 'ls':
         ls()
         break
-    case 'test':
-        timeout = positionals[1] || '2'
+    case 'test': {
+        const timeout = positionals[1] || '2'
         test(Number.parseFloat(timeout) * 1000)
         break
+    }
+    case 'add': {
+        const name = positionals[1]
+        const url = positionals[2]
+        add(name, url)
+        break
+    }
+    case 'del': {
+        const name = positionals[1]
+        del(name)
+        break
+    }
     case 'rc':
         rc()
         break
-    case 'use':
-        name = positionals[1]
+    case 'use': {
+        const name = positionals[1]
         use(name)
         break
+    }
     default:
-        console.error(`Unknown command '${command}'\n`)
+        console.log(`Unknown command '${command}'\n`)
         process.exit(1)
 }
 
@@ -86,10 +97,10 @@ function help(v) {
     const __dirname = dirname(__filename)
     const pkg = JSON.parse(readFileSync(`${__dirname}/package.json`, 'utf-8'))
     if (v) {
-        console.error('v' + pkg.version)
+        console.log('v' + pkg.version)
         process.exit(1)
     }
-    console.error(`${c.green(pkg.name)} v${pkg.version}
+    console.log(`${c.green(pkg.name)} v${pkg.version}
 
 ${c.bold('Usage:')}
     nrml ls                List registries
@@ -97,6 +108,8 @@ ${c.bold('Usage:')}
     nrml test ${c.gray(
         '[<timeout>]'
     )}  Test registry speed, optional timeout in second (default: 2)
+    nrml add  ${c.gray('<name>')} ${c.gray('<url>')} Add custom registry
+    nrml del  ${c.gray('<name>')}       Delete custom registry
     nrml rc                Open .npmrc file
     nrml help              Show this help
 ${c.bold('Global Options:')}
@@ -106,7 +119,7 @@ ${c.bold('Global Options:')}
 
 async function ls() {
     const currentRegistry = await getRegistry(local)
-    printRegistries(currentRegistry)
+    await printRegistries(currentRegistry)
 }
 
 /**
@@ -114,27 +127,30 @@ async function ls() {
  */
 async function use(name) {
     if (!name) {
-        console.error(`Please provide a name!`)
+        console.log(`Please provide a name!`)
         process.exit(-1)
     }
 
-    const names = Object.keys(REGISTRIES)
+    const registries = await getAllRegistries()
+    const names = Array.from(registries.keys())
     if (!names.includes(name)) {
-        console.error(`'${name}' is not in ${c.gray(`[${names.join('|')}]`)}`)
+        console.log(`'${name}' is not in ${c.gray(`[${names.join('|')}]`)}`)
         process.exit(-1)
     }
 
-    const registryUrl = REGISTRIES[name]
+    /** @type {*} */
+    const registryUrl = registries.get(name)
     await setRegistry(local, registryUrl)
-    printRegistries(registryUrl)
+    await printRegistries(registryUrl)
 }
 
 /**
  * @param {number} timeoutLimit
  */
 async function test(timeoutLimit) {
+    const registries = await getAllRegistries()
     const info = await Promise.all(
-        Object.entries(REGISTRIES).map(async ([name, url]) => ({
+        Array.from(registries.entries()).map(async ([name, url]) => ({
             name,
             url,
             timeSpent: await speedTest(url, timeoutLimit),
@@ -142,8 +158,53 @@ async function test(timeoutLimit) {
     )
 
     const currentRegistry = await getRegistry(local)
-    printRegistries(currentRegistry, info, timeoutLimit)
+    await printRegistries(currentRegistry, info, timeoutLimit)
     process.exit(0)
+}
+
+/**
+ * @param {string} name
+ * @param {string} url
+ */
+async function add(name, url) {
+    if (!name) {
+        console.log(`Please provide a name!`)
+        process.exit(-1)
+    }
+
+    if (!url) {
+        console.log(`Please provide an url!`)
+        process.exit(-1)
+    }
+
+    const registries = await getAllRegistries()
+    const names = Array.from(registries.keys())
+    if (names.includes(name)) {
+        console.log(`Registry name ${c.magenta(name)} already exists!`)
+        process.exit(-1)
+    } else {
+        await appendNrmrc(name, url)
+        console.log(
+            `Registry ${c.magenta(name)} has been added, run ${c.green(
+                `nrml use ${name}`
+            )} to use.`
+        )
+    }
+}
+
+/**
+ * @param {string} name
+ */
+async function del(name) {
+    if (!name) {
+        console.log(`Please provide a name!`)
+        process.exit(-1)
+    }
+
+    const nrmrc = await readNrmrc().catch(() => new Map())
+    nrmrc.delete(name)
+    await writeNrmrc(nrmrc)
+    console.log(`Registry ${c.magenta(name)} has been deleted.`)
 }
 
 async function rc() {
@@ -167,7 +228,7 @@ async function rc() {
         try {
             if (shouldRunEditor) execSync(`editor "${filePath}"`)
         } catch {
-            console.error(
+            console.log(
                 `Failed to open file, please open ${c.gray(filePath)} manually.`
             )
             process.exit(-1)

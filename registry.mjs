@@ -1,4 +1,4 @@
-import * as readline from 'node:readline'
+import { createInterface } from 'node:readline'
 
 /**
  * @type {Record<string,string>}
@@ -31,7 +31,7 @@ function checkLine(line) {
  * @see https://docs.npmjs.com/cli/configuring-npm/npmrc
  */
 export async function getRegistryFromStream(stream) {
-    const rl = readline.createInterface(stream)
+    const rl = createInterface(stream)
     for await (const line of rl) {
         const r = checkLine(line)
         if (r) return r
@@ -45,7 +45,7 @@ export async function getRegistryFromStream(stream) {
  * @returns {Promise<string>}
  */
 export async function setRegistryFromStream(stream, registryUrl) {
-    const rl = readline.createInterface(stream)
+    const rl = createInterface(stream)
     const lines = []
     for await (const line of rl) {
         const r = checkLine(line)
