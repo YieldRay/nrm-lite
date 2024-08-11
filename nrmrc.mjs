@@ -47,18 +47,20 @@ export async function readNrmrc() {
 /**
  * @param {string} name
  */
-function encodeName(name) {
-    const s = JSON.stringify(name).slice(1, -1)
-    if (name === s) return name
-    return `"${s}"`
+export function encodeName(name) {
+    if (name.length > 1 && name.startsWith('"') && name.endsWith('"')) {
+        return `"${name.replaceAll('"', String.raw`\"`)}"`
+    } else {
+        return name
+    }
 }
 
 /**
  * @param {string} name
  */
-function decodeName(name) {
-    if (name.startsWith('"') && name.endsWith('"')) {
-        return JSON.parse(name)
+export function decodeName(name) {
+    if (name.length > 1 && name.startsWith('"') && name.endsWith('"')) {
+        return name.slice(1, -1).replaceAll(String.raw`\"`, '"')
     } else {
         return name
     }

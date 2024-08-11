@@ -3,7 +3,7 @@ import * as assert from 'node:assert'
 import { Readable } from 'node:stream'
 import { getRegistryFromStream } from './registry.mjs'
 
-test('test getRegistryFromStream()', async () => {
+test('getRegistryFromStream()', async () => {
     assert.deepStrictEqual(
         await getRegistryFromStream(Readable.from('')),
         undefined
