@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/YieldRay/nrm-lite/compare/v0.2.0...v0.3.0) (2024-08-11)
+
+
+### Features
+
+* improve open file ([50626b5](https://github.com/YieldRay/nrm-lite/commit/50626b5f93443ab1b1a6ddb15e08fd824b570764))
+* support add&del ([69f4266](https://github.com/YieldRay/nrm-lite/commit/69f4266177083de9eb5e57b3dbadf41b3bc78656))
+
+
+### Bug Fixes
+
+* fix nrmrc parser ([056b4b7](https://github.com/YieldRay/nrm-lite/commit/056b4b747f6b9f81ca7efeb620734c4312a60687))
+
 ## [0.2.0](https://github.com/YieldRay/nrm-lite/compare/v0.1.3...v0.2.0) (2024-06-11)
 
 
