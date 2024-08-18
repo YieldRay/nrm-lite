@@ -52,7 +52,7 @@ export default c
 export async function printRegistries(
     currentRegistryUrl,
     registriesInfo,
-    timeoutLimit
+    timeoutLimit,
 ) {
     const registries = await getAllRegistries()
     registriesInfo ||= Array.from(registries.entries()).map(([name, url]) => ({
@@ -61,7 +61,7 @@ export async function printRegistries(
     }))
 
     const maxNameLength = Math.max(
-        ...registriesInfo.map(({ name }) => name.length)
+        ...registriesInfo.map(({ name }) => name.length),
     )
     /**
      * @type {number=}
@@ -73,7 +73,7 @@ export async function printRegistries(
             // lazy compute
             if (!maxUrlLength)
                 maxUrlLength = Math.max(
-                    ...registriesInfo.map(({ url }) => url.length)
+                    ...registriesInfo.map(({ url }) => url.length),
                 )
         }
 

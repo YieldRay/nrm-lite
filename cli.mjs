@@ -106,7 +106,7 @@ ${c.bold('Usage:')}
     nrml ls                List registries
     nrml use  ${c.gray('<name>')}       Use registry
     nrml test ${c.gray(
-        '[<timeout>]'
+        '[<timeout>]',
     )}  Test registry speed, optional timeout in second (default: 2)
     nrml add  ${c.gray('<name>')} ${c.gray('<url>')} Add custom registry
     nrml del  ${c.gray('<name>')}       Delete custom registry
@@ -154,7 +154,7 @@ async function test(timeoutLimit) {
             name,
             url,
             timeSpent: await speedTest(url, timeoutLimit),
-        }))
+        })),
     )
 
     const currentRegistry = await getRegistry(local)
@@ -186,8 +186,8 @@ async function add(name, url) {
         await appendNrmrc(name, url)
         console.log(
             `Registry ${c.magenta(name)} has been added, run ${c.green(
-                `nrml use ${name}`
-            )} to use.`
+                `nrml use ${name}`,
+            )} to use.`,
         )
     }
 }
@@ -229,7 +229,7 @@ async function rc() {
             if (shouldRunEditor) execSync(`editor "${filePath}"`)
         } catch {
             console.log(
-                `Failed to open file, please open ${c.gray(filePath)} manually.`
+                `Failed to open file, please open ${c.gray(filePath)} manually.`,
             )
             process.exit(-1)
         }

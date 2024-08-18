@@ -6,14 +6,14 @@ import { getRegistryFromStream } from './registry.mjs'
 test('getRegistryFromStream()', async () => {
     assert.deepStrictEqual(
         await getRegistryFromStream(Readable.from('')),
-        undefined
+        undefined,
     )
 
     assert.deepStrictEqual(
         await getRegistryFromStream(
-            Readable.from(`registry=https://registry.npmmirror.com/`)
+            Readable.from(`registry=https://registry.npmmirror.com/`),
         ),
-        'https://registry.npmmirror.com/'
+        'https://registry.npmmirror.com/',
     )
 
     assert.deepStrictEqual(
@@ -21,8 +21,8 @@ test('getRegistryFromStream()', async () => {
             Readable.from(`//registry.npmjs.org/:_authToken=npm_123456
 
 # strict-ssl=false
-registry= https://registry.npmmirror.com/`)
+registry= https://registry.npmmirror.com/`),
         ),
-        'https://registry.npmmirror.com/'
+        'https://registry.npmmirror.com/',
     )
 })

@@ -82,7 +82,7 @@ function resolveUrl(url) {
 export async function appendNrmrc(name, url) {
     return await appendFile(
         nrmrcPath,
-        `[${encodeName(name)}]\nregistry=${resolveUrl(url)}\n\n`
+        `[${encodeName(name)}]\nregistry=${resolveUrl(url)}\n\n`,
     )
 }
 
@@ -95,8 +95,8 @@ export async function writeNrmrc(registries) {
         Array.from(registries.entries())
             .map(
                 ([name, url]) =>
-                    `[${encodeName(name)}]\nregistry=${resolveUrl(url)}`
+                    `[${encodeName(name)}]\nregistry=${resolveUrl(url)}`,
             )
-            .join('\n\n')
+            .join('\n\n'),
     )
 }

@@ -35,7 +35,7 @@ Hence you can install `nrm-lite` in deno, so it will be as fast as `dnrm`.
 
 ```sh
 # install `nrml` in deno
-deno install -Arf npm:nrm-lite -n nrml
+deno install -Afgr npm:nrm-lite -n nrml
 
 # test if it's installed
 nrml --help
@@ -50,6 +50,8 @@ Usage:
     nrml ls                List registries
     nrml use  <name>       Use registry
     nrml test [<timeout>]  Test registry speed, optional timeout in second (default: 2)
+    nrml add  <name> <url> Add custom registry
+    nrml del  <name>       Delete custom registry
     nrml rc                Open .npmrc file
     nrml help              Show this help
 Global Options:
