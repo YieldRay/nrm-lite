@@ -1,6 +1,6 @@
 {
     "name": "nrm-lite",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "type": "module",
     "description": "Fast and lightweight NpmRegistryManager, for the minimalists.",
     "main": "index.mjs",
