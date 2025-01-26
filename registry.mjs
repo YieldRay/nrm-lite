@@ -1,7 +1,7 @@
 import { createInterface } from 'node:readline'
 
 /**
- * @type {Record<string,string>}
+ * @type {Record<string, string>}
  */
 export const REGISTRIES = {
     npm: 'https://registry.npmjs.org/',
@@ -10,6 +10,7 @@ export const REGISTRIES = {
     taobao: 'https://registry.npmmirror.com/',
     npmMirror: 'https://skimdb.npmjs.com/registry/',
     tencent: 'https://mirrors.cloud.tencent.com/npm/',
+    ustc: 'https://npmreg.proxy.ustclug.org/',
 }
 
 /**
@@ -27,7 +28,7 @@ function checkLine(line) {
 
 /**
  * @param {NodeJS.ReadableStream} stream
- * @returns {Promise<string|undefined>}
+ * @returns {Promise<string | undefined>}
  * @see https://docs.npmjs.com/cli/configuring-npm/npmrc
  */
 export async function getRegistryFromStream(stream) {
