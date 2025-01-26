@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/YieldRay/nrm-lite/compare/v0.3.0...v0.3.1) (2025-01-26)
+
+
+### Miscellaneous Chores
+
+* add npmreg.proxy.ustclug.org to built-in registry ([294a9f3](https://github.com/YieldRay/nrm-lite/commit/294a9f394afef55ecf7a46394d6fd640641e9cb3))
+
 ## [0.3.0](https://github.com/YieldRay/nrm-lite/compare/v0.2.0...v0.3.0) (2024-08-11)
 
 
