@@ -8,8 +8,10 @@ export const REGISTRIES = {
     yarn: 'https://registry.yarnpkg.com/',
     github: 'https://npm.pkg.github.com/',
     taobao: 'https://registry.npmmirror.com/',
+    cnpm: 'https://r.cnpmjs.org/',
     npmMirror: 'https://skimdb.npmjs.com/registry/',
     tencent: 'https://mirrors.cloud.tencent.com/npm/',
+    huawei: 'https://mirrors.huaweicloud.com/repository/npm/',
     ustc: 'https://npmreg.proxy.ustclug.org/',
 }
 

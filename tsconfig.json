@@ -19,6 +19,8 @@
         // Type Checking
         "strict": true,
         "noFallthroughCasesInSwitch": true,
-        "noPropertyAccessFromIndexSignature": true
+        "noPropertyAccessFromIndexSignature": true,
+        "verbatimModuleSyntax": true,
+        "erasableSyntaxOnly": true
     }
 }
