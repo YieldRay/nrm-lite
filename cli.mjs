@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 import process from 'node:process'
 import { parseArgs } from 'node:util'
-import { execSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { dirname } from 'node:path'
+import { dirname, join } from 'node:path'
 import { platform } from 'node:os'
 import {
     getRegistry,
@@ -13,7 +12,7 @@ import {
     getAllRegistries,
 } from './config.mjs'
 import { speedTest } from './registry.mjs'
-import c, { printRegistries } from './utils.mjs'
+import { styleText, execFileAsync, printRegistries } from './utils.mjs'
 import { appendNrmrc, readNrmrc, writeNrmrc } from './nrmrc.mjs'
 
 // https://nodejs.org/api/util.html#utilparseargsconfig
@@ -95,24 +94,30 @@ function help(v) {
     // import pkg from './package.json' assert { type: 'json' }
     const __filename = fileURLToPath(import.meta.url)
     const __dirname = dirname(__filename)
-    const pkg = JSON.parse(readFileSync(`${__dirname}/package.json`, 'utf-8'))
+    const pkg = JSON.parse(
+        readFileSync(join(__dirname, 'package.json'), 'utf-8'),
+    )
     if (v) {
         console.log('v' + pkg.version)
         process.exit(1)
     }
-    console.log(`${c.green(pkg.name)} v${pkg.version}
+    console.log(`${styleText('green', pkg.name)} v${pkg.version}
 
-${c.bold('Usage:')}
+${styleText('bold', 'Usage:')}
     nrml ls                List registries
-    nrml use  ${c.gray('<name>')}       Use registry
-    nrml test ${c.gray(
+    nrml use  ${styleText('grey', '<name>')}       Use registry
+    nrml test ${styleText(
+        'grey',
         '[<timeout>]',
     )}  Test registry speed, optional timeout in second (default: 2)
-    nrml add  ${c.gray('<name>')} ${c.gray('<url>')} Add custom registry
-    nrml del  ${c.gray('<name>')}       Delete custom registry
+    nrml add  ${styleText('grey', '<name>')} ${styleText(
+        'grey',
+        '<url>',
+    )} Add custom registry
+    nrml del  ${styleText('grey', '<name>')}       Delete custom registry
     nrml rc                Open .npmrc file
     nrml help              Show this help
-${c.bold('Global Options:')}
+${styleText('bold', 'Global Options:')}
     --local                Use local .npmrc file, rather than the global one (default: false)`)
     process.exit(1)
 }
@@ -134,7 +139,9 @@ async function use(name) {
     const registries = await getAllRegistries()
     const names = Array.from(registries.keys())
     if (!names.includes(name)) {
-        console.log(`'${name}' is not in ${c.gray(`[${names.join('|')}]`)}`)
+        console.log(
+            `'${name}' is not in ${styleText('grey', `[${names.join('|')}]`)}`,
+        )
         process.exit(-1)
     }
 
@@ -180,12 +187,18 @@ async function add(name, url) {
     const registries = await getAllRegistries()
     const names = Array.from(registries.keys())
     if (names.includes(name)) {
-        console.log(`Registry name ${c.magenta(name)} already exists!`)
+        console.log(
+            `Registry name ${styleText('magenta', name)} already exists!`,
+        )
         process.exit(-1)
     } else {
         await appendNrmrc(name, url)
         console.log(
-            `Registry ${c.magenta(name)} has been added, run ${c.green(
+            `Registry ${styleText(
+                'magenta',
+                name,
+            )} has been added, run ${styleText(
+                'green',
                 `nrml use ${name}`,
             )} to use.`,
         )
@@ -204,14 +217,14 @@ async function del(name) {
     const nrmrc = await readNrmrc().catch(() => new Map())
     nrmrc.delete(name)
     await writeNrmrc(nrmrc)
-    console.log(`Registry ${c.magenta(name)} has been deleted.`)
+    console.log(`Registry ${styleText('magenta', name)} has been deleted.`)
 }
 
 async function rc() {
     const filePath = await getConfigPath(local)
     try {
         // try vscode first
-        execSync(`code ${filePath}`)
+        await execFileAsync('code', [filePath])
     } catch {
         /** @type {Record<string, string>} */
         const map = { win32: 'start', darwin: 'open', linux: 'xdg-open' }
@@ -219,17 +232,20 @@ async function rc() {
 
         let shouldRunEditor = false
         try {
-            if (cmd) execSync(`${cmd} "${filePath}"`)
+            if (cmd) await execFileAsync(cmd, [filePath])
             else shouldRunEditor = true
         } catch {
             shouldRunEditor = true
         }
 
         try {
-            if (shouldRunEditor) execSync(`editor "${filePath}"`)
+            if (shouldRunEditor) await execFileAsync('editor', [filePath])
         } catch {
             console.log(
-                `Failed to open file, please open ${c.gray(filePath)} manually.`,
+                `Failed to open file, please open ${styleText(
+                    'gray',
+                    filePath,
+                )} manually.`,
             )
             process.exit(-1)
         }

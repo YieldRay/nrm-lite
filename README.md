@@ -11,9 +11,9 @@ Like [dnrm](https://github.com/markthree/dnrm), but in pure Node.js.
 
 ## Features
 
--   Super lightweight, pure Node.js with NO dependency
--   Fast, DO NOT parse the `.npmrc` file
--   Correct, follow the rules of the `.npmrc` file
+- Super lightweight, pure Node.js with NO dependency
+- Fast, DO NOT parse the `.npmrc` file
+- Correct, follow the rules of the `.npmrc` file
 
 ## Install
 
@@ -31,7 +31,7 @@ nrml test
 ```
 
 It is well-known that [Deno](https://deno.com/)'s cold start is faster than Node.js.  
-Hence you can install `nrm-lite` in deno, so it will be as fast as `dnrm`.
+Consequently, installing `nrm-lite` in Deno allows it to perform as quickly as `dnrm`.
 
 ```sh
 # install `nrml` in deno

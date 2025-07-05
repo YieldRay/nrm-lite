@@ -8,7 +8,8 @@
     "scripts": {
         "test": "node --test",
         "watch": "tsc --watch",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "benchmark": "node benchmark.mjs"
     },
     "engines": {
         "node": ">16"
@@ -22,8 +23,8 @@
         "nrml": "cli.mjs"
     },
     "devDependencies": {
-        "@types/node": "^22.13.9",
-        "typescript": "^5.8.2"
+        "@types/node": "^22.16.0",
+        "typescript": "^5.8.3"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org"

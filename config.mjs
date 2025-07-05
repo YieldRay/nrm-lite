@@ -1,5 +1,6 @@
 import { createReadStream } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
+import { normalize, join } from 'node:path'
 import { homedir } from 'node:os'
 import {
     REGISTRIES,
@@ -51,7 +52,7 @@ export async function getConfigPath(local) {
     if (local || detectLocal) {
         return rc
     }
-    return `${homedir().replaceAll('\\', '/')}/${rc}`
+    return join(normalize(homedir()), rc).replaceAll('\\', '/')
 }
 
 /**

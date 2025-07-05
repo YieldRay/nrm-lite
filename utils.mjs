@@ -1,5 +1,71 @@
 import { stat } from 'node:fs/promises'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+import { platform } from 'node:os'
 import { getAllRegistries } from './config.mjs'
+
+/**
+ * ANSI escape codes mapping
+ * @typedef {keyof typeof styles} Format
+ */
+const styles = {
+    // Reset
+    reset: '\x1b[0m',
+
+    // Text styles
+    bold: '\x1b[1m',
+    dim: '\x1b[2m',
+    italic: '\x1b[3m',
+    underline: '\x1b[4m',
+    strikethrough: '\x1b[9m',
+
+    // Text colors
+    black: '\x1b[30m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    yellow: '\x1b[33m',
+    blue: '\x1b[34m',
+    magenta: '\x1b[35m',
+    cyan: '\x1b[36m',
+    white: '\x1b[37m',
+    gray: '\x1b[90m',
+    grey: '\x1b[90m',
+
+    // Bright text colors
+    brightRed: '\x1b[91m',
+    brightGreen: '\x1b[92m',
+    brightYellow: '\x1b[93m',
+    brightBlue: '\x1b[94m',
+    brightMagenta: '\x1b[95m',
+    brightCyan: '\x1b[96m',
+    brightWhite: '\x1b[97m',
+
+    // Background colors
+    bgBlack: '\x1b[40m',
+    bgRed: '\x1b[41m',
+    bgGreen: '\x1b[42m',
+    bgYellow: '\x1b[43m',
+    bgBlue: '\x1b[44m',
+    bgMagenta: '\x1b[45m',
+    bgCyan: '\x1b[46m',
+    bgWhite: '\x1b[47m',
+}
+
+/**
+ * Basic implementation of util.styleText for formatting text with ANSI colors
+ * @param {Format | Format[]} format - A text format or an Array of text formats
+ * @param {string} text - The text to be formatted
+ * @returns {string} The formatted text with ANSI escape codes
+ */
+export function styleText(format, text) {
+    const formats = Array.isArray(format) ? format : [format]
+    // Build the opening escape sequences
+    let openCodes = ''
+    for (const fmt of formats)
+        if (fmt in styles) openCodes += styles[/** @type {Format} */ (fmt)]
+    // Return formatted text with reset at the end
+    return openCodes + text + styles.reset
+}
 
 /**
  * @param {string} filePath
@@ -10,39 +76,21 @@ export const isFile = async (filePath) =>
         .then((stat) => stat.isFile())
         .catch((_) => false)
 
+export const _execFileAsync = promisify(execFile)
 /**
- * @param {string} str
- * @param {number} begin
- * @param {number} end
+ * @param {string} file
+ * @param {string[]} args
  */
-const color = (str, begin, end) => `\u001b[${begin}m${str}\u001b[${end}m`
-
-/**
- * Check out https://github.com/YieldRay/terminal-sequences/blob/main/sgr/style.ts
- */
-const c = {
-    /** @param {string} str*/
-    blue: (str) => color(str, 34, 39),
-    /** @param {string} str*/
-    red: (str) => color(str, 31, 39),
-    /** @param {string} str*/
-    green: (str) => color(str, 32, 39),
-    /** @param {string} str*/
-    yellow: (str) => color(str, 33, 39),
-    /** @param {string} str*/
-    magenta: (str) => color(str, 35, 39),
-    /** @param {string} str*/
-    cyan: (str) => color(str, 36, 39),
-    /** @param {string} str*/
-    gray: (str) => color(str, 90, 39),
-
-    /** @param {string} str*/
-    bold: (str) => color(str, 1, 22),
-    /** @param {string} str*/
-    italic: (str) => color(str, 3, 23),
+export async function execFileAsync(file, args) {
+    if (platform() === 'win32') {
+        // start /b cmd /c <file> <args>
+        return _execFileAsync('cmd', ['/c', file, ...args], {
+            windowsHide: true,
+        })
+    } else {
+        return _execFileAsync(file, args)
+    }
 }
-
-export default c
 
 /**
  * @param {string} currentRegistryUrl
@@ -80,17 +128,26 @@ export async function printRegistries(
         let row = `${name.padEnd(maxNameLength)} → ${
             maxUrlLength ? url.padEnd(maxUrlLength) : url
         }`
-        if (url === currentRegistryUrl) row = c.blue(row)
+        if (url === currentRegistryUrl) row = styleText('blue', row)
 
         if (timeoutLimit) {
             if (!timeSpent) {
-                row += c.red(` (Error)`)
+                row += styleText('red', ` (Error)`)
             } else if (timeSpent >= timeoutLimit) {
-                row += c.red(` (>${(timeoutLimit / 1000).toFixed(1)}s)`)
+                row += styleText(
+                    'red',
+                    ` (>${(timeoutLimit / 1000).toFixed(1)}s)`,
+                )
             } else if (timeSpent >= timeoutLimit / 2) {
-                row += c.yellow(` (${(timeSpent / 1000).toFixed(2)}s)`)
+                row += styleText(
+                    'yellow',
+                    ` (${(timeSpent / 1000).toFixed(2)}s)`,
+                )
             } else {
-                row += c.green(` (${(timeSpent / 1000).toFixed(2)}s)`)
+                row += styleText(
+                    'green',
+                    ` (${(timeSpent / 1000).toFixed(2)}s)`,
+                )
             }
         }
         console.log(row)
