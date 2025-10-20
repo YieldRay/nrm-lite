@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import process from 'node:process'
-import { parseArgs } from 'node:util'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -12,7 +11,12 @@ import {
     getAllRegistries,
 } from './config.mjs'
 import { speedTest } from './registry.mjs'
-import { styleText, execFileAsync, printRegistries } from './utils.mjs'
+import {
+    parseArgs,
+    styleText,
+    execFileAsync,
+    printRegistries,
+} from './utils.mjs'
 import { appendNrmrc, readNrmrc, writeNrmrc } from './nrmrc.mjs'
 
 // https://nodejs.org/api/util.html#utilparseargsconfig

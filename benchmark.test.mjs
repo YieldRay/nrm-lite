@@ -11,7 +11,7 @@ async function time(...args) {
         lines.map((line) => {
             const [type, spent] = line.split('\t')
             return [type, spent]
-        }),
+        })
     )
     return { ...data, spent: await spent(...args) }
 }
@@ -34,11 +34,15 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const script = join(__dirname, 'cli.mjs')
 
-console.log('Deno')
-console.log(await time('deno', 'run', '-A', script))
+try {
+    console.log('Deno')
+    console.log(await time('deno', 'run', '-A', script))
 
-console.log('Node')
-console.log(await time('node', script))
+    console.log('Node')
+    console.log(await time('node', script))
+} catch (e) {
+    console.error('Error running benchmark:', e)
+}
 
 // TODO: running this benchmark shows that Node is faster than Deno,
 // but when directly running the cli, Deno is faster than Node. (which is the real case)

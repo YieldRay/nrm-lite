@@ -52,7 +52,7 @@ export async function getConfigPath(local) {
     if (local || detectLocal) {
         return rc
     }
-    return join(normalize(homedir()), rc).replaceAll('\\', '/')
+    return join(normalize(homedir()), rc).replace(/\\/g, '/')
 }
 
 /**
