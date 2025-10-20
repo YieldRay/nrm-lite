@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/YieldRay/nrm-lite/compare/v0.3.1...v0.3.2) (2025-10-20)
+
+
+### Features
+
+* implement parseArgs and replace fetch with request to support node 14 ([0ddf3d5](https://github.com/YieldRay/nrm-lite/commit/0ddf3d5d82c712f0b36fd0c5eb4d4955eb4038e7))
+
 ## [0.3.1](https://github.com/YieldRay/nrm-lite/compare/v0.3.0...v0.3.1) (2025-01-26)
 
 
