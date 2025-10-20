@@ -12,7 +12,7 @@
         "benchmark": "node benchmark.mjs"
     },
     "engines": {
-        "node": ">16"
+        "node": ">=14"
     },
     "files": [
         "*.js",
@@ -23,8 +23,8 @@
         "nrml": "cli.mjs"
     },
     "devDependencies": {
-        "@types/node": "^22.16.0",
-        "typescript": "^5.8.3"
+        "@types/node": "^22.18.11",
+        "typescript": "^5.9.3"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org"

@@ -1,4 +1,6 @@
+import { parse } from 'node:url'
 import { createInterface } from 'node:readline'
+import { request } from './utils.mjs'
 
 /**
  * @type {Record<string, string>}
@@ -67,18 +69,22 @@ export async function setRegistryFromStream(stream, registryUrl) {
  * @param {number} timeoutLimit - in milliseconds
  */
 export async function speedTest(url, timeoutLimit) {
-    try {
+    return new Promise((resolve) => {
         const beginTime = Date.now()
-        await fetch(url, {
-            method: 'HEAD',
-            signal: AbortSignal.timeout(timeoutLimit),
-        })
-        const timeSpent = Date.now() - beginTime
-        return timeSpent > timeoutLimit ? Infinity : timeSpent
-    } catch (e) {
-        if (e instanceof DOMException) {
-            return Infinity
-        }
-        return null // Network Error
-    }
+        request(
+            { method: 'HEAD', ...parse(url), timeout: timeoutLimit },
+            (res) => {
+                res.destroy()
+                const timeSpent = Date.now() - beginTime
+                resolve(timeSpent > timeoutLimit ? Infinity : timeSpent) // Normal response
+            },
+        )
+            .on('timeout', () => {
+                resolve(Infinity) // Timeout
+            })
+            .on('error', () => {
+                resolve(null) // Network Error
+            })
+            .end()
+    })
 }

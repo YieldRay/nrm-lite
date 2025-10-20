@@ -1,8 +1,161 @@
+import utils, { promisify } from 'node:util'
 import { stat } from 'node:fs/promises'
 import { execFile } from 'node:child_process'
-import { promisify } from 'node:util'
 import { platform } from 'node:os'
+import http from 'node:http'
+import https from 'node:https'
+import { parse, format } from 'node:url'
 import { getAllRegistries } from './config.mjs'
+
+/**
+ * @param {import('http').RequestOptions | import('https').RequestOptions | string | URL} options
+ * @param {(res: import('http').IncomingMessage) => void} callback
+ * @returns {import('http').ClientRequest}
+ */
+export function request(options, callback) {
+    const url = parse(format(options), false, true)
+    const module = url.protocol === 'https:' ? https : http
+    return module.request(options, callback)
+}
+
+export const parseArgs = utils.parseArgs || _parseArgs
+
+/**
+ * Polyfill for Node.js util.parseArgs
+ * @param {import('util').ParseArgsConfig} config
+ * @returns {ReturnType<import('util').parseArgs>}
+ */
+function _parseArgs(config = {}) {
+    const {
+        options = {},
+        strict = false,
+        allowPositionals = false,
+        args = process.argv.slice(2),
+    } = config
+
+    /** @type {{ [longOption: string]: undefined | string | boolean | Array<string | boolean> }} */
+    const values = {}
+    /** @type {string[]} */
+    const positionals = []
+
+    // Initialize default values
+    for (const [name, opt] of Object.entries(options)) {
+        if ('default' in opt) {
+            values[name] = opt.default
+        } else if (opt.multiple) {
+            values[name] = []
+        }
+    }
+
+    for (let i = 0; i < args.length; i++) {
+        const arg = args[i]
+
+        // Handle positional arguments
+        if (!arg.startsWith('-')) {
+            if (!allowPositionals && strict) {
+                throw new Error(`Unexpected positional argument: ${arg}`)
+            }
+            positionals.push(arg)
+            continue
+        }
+
+        // Handle long options (--option)
+        if (arg.startsWith('--')) {
+            const optName = arg.slice(2)
+            const option = options[optName]
+
+            if (!option) {
+                if (strict) {
+                    throw new Error(`Unknown option: ${arg}`)
+                }
+                continue
+            }
+
+            if (option.type === 'boolean') {
+                if (option.multiple) {
+                    if (!Array.isArray(values[optName])) values[optName] = []
+                    values[optName].push(true)
+                } else {
+                    values[optName] = true
+                }
+            } else if (option.type === 'string') {
+                const value = args[++i]
+                if (value === undefined) {
+                    throw new Error(`Option ${arg} requires a value`)
+                }
+                if (option.multiple) {
+                    if (!Array.isArray(values[optName])) values[optName] = []
+                    values[optName].push(value)
+                } else {
+                    values[optName] = value
+                }
+            }
+            continue
+        }
+
+        // Handle short options (-o)
+        if (arg.startsWith('-')) {
+            const shortOpts = arg.slice(1).split('')
+
+            for (let j = 0; j < shortOpts.length; j++) {
+                const shortOpt = shortOpts[j]
+                let optName = null
+
+                // Find option by short name
+                for (const [name, opt] of Object.entries(options)) {
+                    if (opt.short === shortOpt) {
+                        optName = name
+                        break
+                    }
+                }
+
+                if (!optName) {
+                    if (strict) {
+                        throw new Error(`Unknown option: -${shortOpt}`)
+                    }
+                    continue
+                }
+
+                const option = options[optName]
+
+                if (option.type === 'boolean') {
+                    if (option.multiple) {
+                        if (!Array.isArray(values[optName]))
+                            values[optName] = []
+                        //@ts-ignore
+                        values[optName].push(true)
+                    } else {
+                        values[optName] = true
+                    }
+                } else if (option.type === 'string') {
+                    let value
+                    // If not last char in group, remaining chars are the value
+                    if (j < shortOpts.length - 1) {
+                        value = shortOpts.slice(j + 1).join('')
+                        j = shortOpts.length // End loop
+                    } else {
+                        value = args[++i]
+                        if (value === undefined) {
+                            throw new Error(
+                                `Option -${shortOpt} requires a value`,
+                            )
+                        }
+                    }
+                    if (option.multiple) {
+                        if (!Array.isArray(values[optName]))
+                            values[optName] = []
+                        //@ts-ignore
+                        values[optName].push(value)
+                    } else {
+                        values[optName] = value
+                    }
+                }
+            }
+        }
+    }
+
+    return { values, positionals }
+}
 
 /**
  * ANSI escape codes mapping
@@ -51,13 +204,15 @@ const styles = {
     bgWhite: '\x1b[47m',
 }
 
+export const styleText = utils.styleText || _styleText
+
 /**
  * Basic implementation of util.styleText for formatting text with ANSI colors
  * @param {Format | Format[]} format - A text format or an Array of text formats
  * @param {string} text - The text to be formatted
  * @returns {string} The formatted text with ANSI escape codes
  */
-export function styleText(format, text) {
+function _styleText(format, text) {
     const formats = Array.isArray(format) ? format : [format]
     // Build the opening escape sequences
     let openCodes = ''
@@ -103,10 +258,13 @@ export async function printRegistries(
     timeoutLimit,
 ) {
     const registries = await getAllRegistries()
-    registriesInfo ||= Array.from(registries.entries()).map(([name, url]) => ({
-        name,
-        url,
-    }))
+    if (!registriesInfo)
+        registriesInfo = Array.from(registries.entries()).map(
+            ([name, url]) => ({
+                name,
+                url,
+            }),
+        )
 
     const maxNameLength = Math.max(
         ...registriesInfo.map(({ name }) => name.length),
