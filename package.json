@@ -23,7 +23,7 @@
         "nrml": "cli.mjs"
     },
     "devDependencies": {
-        "@types/node": "^22.18.11",
+        "@types/node": "^22.19.15",
         "typescript": "^5.9.3"
     },
     "publishConfig": {

@@ -25,7 +25,7 @@ async function spent(...args) {
     return end - start
 }
 
-// if have args, we run time <args>
+// if there are args, we run time <args>
 if (process.argv.length > 2) {
     console.log(await time(...process.argv.slice(2)))
     process.exit(0)
@@ -40,10 +40,13 @@ try {
 
     console.log('Node')
     console.log(await time('node', script))
+
+    console.log('Bun')
+    console.log(await time('bun', script))
 } catch (e) {
     console.error('Error running benchmark:', e)
 }
 
-// TODO: running this benchmark shows that Node is faster than Deno,
-// but when directly running the cli, Deno is faster than Node. (which is the real case)
-// so we should question if deno have a better cold start time, or by other reasons?
+// TODO: running this benchmark may show that Node is faster than Deno,
+// but when directly running the CLI, Deno is faster than Node (which is the real case).
+// So we should question whether Deno has a better cold start time, or if there are other reasons.

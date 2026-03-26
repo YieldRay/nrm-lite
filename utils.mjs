@@ -283,10 +283,11 @@ export async function printRegistries(
                 )
         }
 
-        let row = `${name.padEnd(maxNameLength)} → ${
+        const isCurrent = url === currentRegistryUrl
+        let row = `${isCurrent ? '*' : ' '} ${name.padEnd(maxNameLength)} → ${
             maxUrlLength ? url.padEnd(maxUrlLength) : url
         }`
-        if (url === currentRegistryUrl) row = styleText('blue', row)
+        if (isCurrent) row = styleText('blue', row)
 
         if (timeoutLimit) {
             if (!timeSpent) {
