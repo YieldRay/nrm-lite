@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/YieldRay/nrm-lite/compare/v0.3.2...v0.4.0) (2026-03-26)
+
+
+### Features
+
+* enhance printRegistries to indicate current registry with asterisks ([ccce9a5](https://github.com/YieldRay/nrm-lite/commit/ccce9a54dc4212a9fd55dc77d22f5936856027a2))
+
 ## [0.3.2](https://github.com/YieldRay/nrm-lite/compare/v0.3.1...v0.3.2) (2025-10-20)
 
 
