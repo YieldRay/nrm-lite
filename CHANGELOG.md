@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/YieldRay/nrm-lite/compare/v0.4.0...v0.4.1) (2026-05-01)
+
+
+### Bug Fixes
+
+* add existence check for .nrmrc file in readNrmrc function ([d019ad2](https://github.com/YieldRay/nrm-lite/commit/d019ad24208158af6e06a37fbd4795cd5fdee3d8))
+
 ## [0.4.0](https://github.com/YieldRay/nrm-lite/compare/v0.3.2...v0.4.0) (2026-03-26)
 
 
