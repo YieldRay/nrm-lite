@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import process from 'node:process'
-import { readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { platform } from 'node:os'
@@ -93,14 +93,26 @@ switch (command) {
 /**
  * @param {boolean=} v - only print version number
  */
-function help(v) {
-    // assert json will cause ExperimentalWarning. so we use this instead
-    // import pkg from './package.json' assert { type: 'json' }
-    const __filename = fileURLToPath(import.meta.url)
-    const __dirname = dirname(__filename)
-    const pkg = JSON.parse(
-        readFileSync(join(__dirname, 'package.json'), 'utf-8'),
-    )
+async function help(v) {
+    let pkg = { name: 'nrm-lite', version: 'unknown' }
+    try {
+        const url = new URL(import.meta.url)
+        url.pathname = join(url.pathname, '..', 'package.json')
+        /** @type {(url: string) => Promise<any>} */
+        const importJSON = (url) =>
+            Function(
+                // we must dynamically run the code, since this syntax is not supported for node<20.10
+                `import(${url}, { with: { type: 'json' } }).then((mod) => mod.default)`,
+            )()
+        pkg = await importJSON(url.href)
+    } catch (_) {
+        const require = createRequire(import.meta.url)
+        const pkgPath = join(
+            dirname(fileURLToPath(import.meta.url)),
+            'package.json',
+        )
+        pkg = require(pkgPath)
+    }
     if (v) {
         console.log('v' + pkg.version)
         process.exit(1)
@@ -218,7 +230,7 @@ async function del(name) {
         process.exit(-1)
     }
 
-    const nrmrc = await readNrmrc().catch(() => new Map())
+    const nrmrc = await readNrmrc()
     nrmrc.delete(name)
     await writeNrmrc(nrmrc)
     console.log(`Registry ${styleText('magenta', name)} has been deleted.`)
