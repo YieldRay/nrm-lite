@@ -3,14 +3,17 @@ import { resolve } from 'node:path'
 import { createReadStream } from 'node:fs'
 import { createInterface } from 'node:readline'
 import { appendFile, writeFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 
 const nrmrcPath = resolve(homedir(), '.nrmrc')
 
 /**
  * Read config line by line, stop when invalid.
- * Warn that this function may throws, the caller SHOULD handle any error
  */
 export async function readNrmrc() {
+    if (!existsSync(nrmrcPath)) {
+        return new Map()
+    }
     const rl = createInterface(createReadStream(nrmrcPath))
     /**
      * false: [name]

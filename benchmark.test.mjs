@@ -11,7 +11,7 @@ async function time(...args) {
         lines.map((line) => {
             const [type, spent] = line.split('\t')
             return [type, spent]
-        })
+        }),
     )
     return { ...data, spent: await spent(...args) }
 }
