@@ -94,25 +94,15 @@ switch (command) {
  * @param {boolean=} v - only print version number
  */
 async function help(v) {
-    let pkg = { name: 'nrm-lite', version: 'unknown' }
+    let pkg = { name: 'nrm-lite', version: '.unknown' }
     try {
-        const url = new URL(import.meta.url)
-        url.pathname = join(url.pathname, '..', 'package.json')
-        /** @type {(url: string) => Promise<any>} */
-        const importJSON = (url) =>
-            Function(
-                // we must dynamically run the code, since this syntax is not supported for node<20.10
-                `import(${url}, { with: { type: 'json' } }).then((mod) => mod.default)`,
-            )()
-        pkg = await importJSON(url.href)
-    } catch (_) {
         const require = createRequire(import.meta.url)
         const pkgPath = join(
             dirname(fileURLToPath(import.meta.url)),
             'package.json',
         )
         pkg = require(pkgPath)
-    }
+    } catch {}
     if (v) {
         console.log('v' + pkg.version)
         process.exit(1)
