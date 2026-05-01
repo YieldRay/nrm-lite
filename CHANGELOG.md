@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/YieldRay/nrm-lite/compare/v0.4.1...v0.4.2) (2026-05-01)
+
+
+### Bug Fixes
+
+* remove dynamic import package.json in help function ([bb8fc1d](https://github.com/YieldRay/nrm-lite/commit/bb8fc1d2154d1e8c09a2d3d92aa01fe07037ca31))
+
 ## [0.4.1](https://github.com/YieldRay/nrm-lite/compare/v0.4.0...v0.4.1) (2026-05-01)
 
 
